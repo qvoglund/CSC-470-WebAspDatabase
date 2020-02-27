@@ -67,9 +67,40 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Default.aspx" />
+    <Content Include="frmSize.aspx" />
+    <Content Include="Imgs\checkout-button.png" />
+    <Content Include="checkout.aspx" />
+    <Content Include="Imgs\h-mcdonalds-2-Cheeseburger-Extra-Value-Meals.jpg" />
+    <Content Include="Imgs\h-mcdonalds-Big-Mac-Extra-Value-Meals.jpg" />
+    <Content Include="Imgs\h-mcdonalds-Filet-O-Fish-Extra-Value-Meals.jpg" />
+    <Content Include="Imgs\h-mcdonalds-Quarter-Pounder-with-Cheese-Extra-Value-Meals.jpg" />
+    <Content Include="Imgs\t-mcdonalds-Coca-Cola-Classic-Small.jpg" />
+    <Content Include="Imgs\t-mcdonalds-Fries-Small-Medium.jpg" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="frmSize.aspx.cs">
+      <DependentUpon>frmSize.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="frmSize.aspx.designer.cs">
+      <DependentUpon>frmSize.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="checkout.aspx.cs">
+      <DependentUpon>checkout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="checkout.aspx.designer.cs">
+      <DependentUpon>checkout.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
