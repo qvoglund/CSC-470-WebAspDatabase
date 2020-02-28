@@ -26,11 +26,11 @@ namespace CSC_470_WebAspDatabase
         HttpCookie lineItems = new HttpCookie("lineItems");
         HttpCookie subTotal = new HttpCookie("subTotal");
         HttpCookie origDue = new HttpCookie("origDue");
-
+        HttpCookie due = new HttpCookie("due");
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            //System.Diagnostics.Debug.WriteLine("LOAD");
+          
             if (Request.Cookies["idNum"] != null && Request.Cookies["comboNum"] != null && Request.Cookies["cookieSize"] != null)
             {
                 size = Request.Cookies["cookieSize"].Value;
@@ -40,7 +40,6 @@ namespace CSC_470_WebAspDatabase
 
                 Response.Cookies["cookieSize"].Expires = DateTime.Now.AddDays(-1);
                 Response.Cookies["comboNum"].Expires = DateTime.Now.AddDays(-1);
-                System.Diagnostics.Debug.WriteLine("LOAD w/");
             } else
             {
                 newSale();
@@ -273,6 +272,9 @@ namespace CSC_470_WebAspDatabase
             origDue.Value = (Math.Round(total + total * TAX, 2, MidpointRounding.ToEven)).ToString("N2");
             origDue.Expires.Add(new TimeSpan(0, 1, 0));
             Response.Cookies.Add(origDue);
+            due.Value = origDue.Value;
+            due.Expires.Add(new TimeSpan(0, 1, 0));
+            Response.Cookies.Add(due);
         }
 
         protected void btnCheckout_Click(object sender, ImageClickEventArgs e)

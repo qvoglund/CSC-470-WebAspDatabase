@@ -10,6 +10,7 @@ namespace CSC_470_WebAspDatabase.Imgs
 {
     public partial class checkout : System.Web.UI.Page
     {
+        Default dflt = new Default();
         double orig_due;
         String query;
         SqlConnection conn = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Administrator" +
@@ -17,9 +18,11 @@ namespace CSC_470_WebAspDatabase.Imgs
         SqlCommand cmd = new SqlCommand();
         int id;
         HttpCookie subTotal;
+        HttpCookie due;
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            due = Request.Cookies["due"];
             subTotal = Request.Cookies["subTotal"];
             id = Convert.ToInt16(Request.Cookies["idNum"].Value);
             txtDue.Text = Request.Cookies["subTotal"].Value;
@@ -119,16 +122,23 @@ namespace CSC_470_WebAspDatabase.Imgs
                 txtPaid.Text = paid.ToString("N2");
                 txtChange.Text = (paid - orig_due).ToString("N2");
                 txtDue.Text = "0.00";
+                this.due.Value = "0.00";
+                subTotal.Value = "0.00";
             }
             else if (due > 0)
             {
                 due -= input;
                 txtPaid.Text = (Convert.ToDouble(txtPaid.Text) + input).ToString("N2");
                 txtDue.Text = due.ToString("N2");
-                subTotal.Value = due.ToString("N2");
-                subTotal.Expires.Add(new TimeSpan(0, 1, 0));
-                Response.Cookies.Add(subTotal);
+                subTotal.Value = due.ToString("N2");                
+                this.due.Value = due.ToString("N2");
             }
+            subTotal.Expires.Add(new TimeSpan(0, 1, 0));
+            Response.Cookies.Add(subTotal);
+            this.due.Expires.Add(new TimeSpan(0, 1, 0));
+            Response.Cookies.Add(this.due);
+            System.Diagnostics.Debug.WriteLine(this.due.Value);
+
             txtInput.Text = "0";
         }
 
@@ -140,7 +150,6 @@ namespace CSC_470_WebAspDatabase.Imgs
         {
             subTotal.Value = Request.Cookies["origDue"].Value;
             Response.Cookies.Add(subTotal);
-            System.Diagnostics.Debug.WriteLine(subTotal.Value);
 
             Page.ClientScript.RegisterStartupScript(this.GetType(), "close",
                 "<script language=javascript>window.close();</script>");
@@ -148,7 +157,7 @@ namespace CSC_470_WebAspDatabase.Imgs
 
         protected void btnCheckout_Click(object sender, EventArgs e)
         {
-            if (Convert.ToDouble(txtDue.Text) == 0)
+            if (due.Value == "0.00")
             {
                 query = "UPDATE sales SET total = '" + orig_due + "', sale_complete = 1 WHERE id = " + id;
 
@@ -158,15 +167,17 @@ namespace CSC_470_WebAspDatabase.Imgs
                 cmd.ExecuteNonQuery();
                 conn.Close();
                 update_inventory();
-                HttpCookie newSale = new HttpCookie("newSale");
-                newSale.Value = "TRUE";
-                Response.Cookies.Add(newSale);
+
+                Response.Cookies["idNum"].Expires = DateTime.Now.AddDays(-1);
+                System.Diagnostics.Debug.WriteLine(Response.Cookies["idNum"].Value + " TEST");
 
                 Page.ClientScript.RegisterStartupScript(this.GetType(), "close",
-                "<script language=javascript>window.close();</script>");
+                "<script language=javascript>window.opener.location.href=\"Default.aspx\";window.close();</script>");
             }
             else
             {
+                System.Diagnostics.Debug.WriteLine("due.Value: " + due.Value);
+
                 //DISPLAY AMOUNT DUE
             }
         }
@@ -175,7 +186,7 @@ namespace CSC_470_WebAspDatabase.Imgs
         {
             query = "WITH counts AS (" +
                 "SELECT burger * count AS burger_count, line_items.combo_num, line_items.size, count FROM\n " +
-                "line_items RIGHT OUTER JOIN combso ON line_items.combo_num = combos.combo_num WHERE id = \n" + id +
+                "line_items RIGHT OUTER JOIN combos ON line_items.combo_num = combos.combo_num WHERE id = \n" + id +
                 "GROUP BY burger, line_items.combo_num, line_items.size, line_items.count)\n" +
                 "UPDATE inventory SET quantity = (SELECT quantity FROM inventory WHERE item = 'Burger' AND size = 'NA') \n" +
                 "- (SELECT sum(counts.burger_count) FROM counts) WHERE(item = 'BURGER' AND size ='NA');\n" +
@@ -188,8 +199,29 @@ namespace CSC_470_WebAspDatabase.Imgs
             foreach (String item_size in sizes)
             {
                 query += "WITH COUNTS AS(\n" +
-                    "";
+                    "SELECT french_fry * count AS fry_count, drink * count AS drink_count, line_items.size FROM line_items \n" +
+                    "RIGHT OUTER JOIN combos ON line_items.combo_num = combos.combo_num WHERE id = " + id + " GROUP BY french_fry, \n" +
+                    "drink, line_items.combo_num, line_items.size, line_items.count)\n" +
+                    "UPDATE inventory SET quantity = (SELECT quantity FROM inventory WHERE item = 'French Fry' AND size = '" + item_size + "') \n" +
+                    "-(SELECT sum(counts.fry_count) FROM counts WHERE size = '" + item_size + "') WHERE size = '" + item_size + "' AND item = 'French Fry';\n";
+                query += "WITH COUNTS AS(\n" +
+                    "SELECT french_fry * count AS fry_count, drink * count AS drink_count, line_items.size FROM line_items \n" +
+                    "RIGHT OUTER JOIN combos ON line_items.combo_num = combos.combo_num WHERE id = " + id + " GROUP BY french_fry, \n" +
+                    "drink, line_items.combo_num, line_items.size, line_items.count)\n" +
+                    "UPDATE inventory SET quantity = (SELECT quantity FROM inventory WHERE item = 'Drink' AND size = '" + item_size + "') \n" +
+                    "-(SELECT sum(counts.drink_count) FROM counts WHERE size = '" + item_size + "') WHERE size = '" + item_size + "' AND item = 'Drink';\n";
             }
+            cmd.Connection = conn;
+            cmd.CommandText = query;
+            conn.Open();
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }catch (Exception e)
+            {
+            }
+            conn.Close();
         }
 
     }
