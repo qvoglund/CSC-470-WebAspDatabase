@@ -118,6 +118,9 @@ namespace CSC_470_WebAspDatabase
                 inv_helper("SELECT inventory.size, item, sum(count) AS count, quantity FROM line_items JOIN inventory ON line_items.size = inventory.size" +
                     " WHERE id = " + id + " AND item = 'Drink' GROUP BY item, quantity, inventory.size", combo, size);
             }
+
+
+            updateLineText();
         }
 
         private void inv_helper(String query, String combo, String size)
@@ -129,7 +132,7 @@ namespace CSC_470_WebAspDatabase
             reader = cmd.ExecuteReader();
 
             int cmb = Convert.ToInt16(combo);
-            if (!reader.HasRows)
+            if (true)//!reader.HasRows)
             {
                 conn.Close();
                 if(cmb <= 3)
@@ -156,6 +159,9 @@ namespace CSC_470_WebAspDatabase
                 {
                     if (Convert.ToInt32(reader["quantity"]) < 1)
                     {
+                        String inv = "Invalid number of " + reader["size"].ToString().Trim() + " " + reader["item"] + " in inventory.";
+                        ClientScript.RegisterStartupScript(this.GetType(), "invalidInventoryAltert",
+                            "alert('" + inv + "');", true);
                         /*****
                          * Insert a message box alerting that there isn't enough inventory
                          *****/
@@ -163,22 +169,26 @@ namespace CSC_470_WebAspDatabase
                         return;
                     }
                 }
-            } else
-            {
-                while (reader.Read())
-                {
-                    if (reader.HasRows)
-                    {
-                        if (Convert.ToInt32(reader["quantity"]) < Convert.ToInt32(reader["count"]))
-                        {
-                            /*****
-                             * Insert a message box alerting invalid inventory
-                             *****/
-                            conn.Close();
-                            return;
-                        }
-                    }
-                }
+            //} else
+            //{
+            //    System.Diagnostics.Debug.WriteLine(query);
+
+            //    while (reader.Read())
+            //    {
+            //        if (reader.HasRows)
+            //        {
+            //            System.Diagnostics.Debug.WriteLine(reader["quantity"] + " " + reader["item"] + " " + reader["size"] + " " + Request.Cookies["cookieSize"].Value);
+            //            if (Convert.ToInt32(reader["quantity"]) < Convert.ToInt32(reader["count"]))
+            //            {
+            //                /*****
+            //                 * Insert a message box alerting invalid inventory
+            //                 *****/
+            //                //System.Diagnostics.Debug.WriteLine("Invalid number of " + reader["item"]);
+            //                conn.Close();
+            //                return;
+            //            }
+            //        }
+            //    }
             }
 
             conn.Close();
@@ -213,7 +223,6 @@ namespace CSC_470_WebAspDatabase
             cmd.ExecuteNonQuery();
             conn.Close();
 
-            updateLineText();
         }
 
         private void updateLineText()
@@ -280,6 +289,12 @@ namespace CSC_470_WebAspDatabase
         protected void btnCheckout_Click(object sender, ImageClickEventArgs e)
         {
             String newWin = "window.open('checkout.aspx', 'popup_window', 'width=450,height=400,left=100,top=100,resizable=no');";
+            ClientScript.RegisterStartupScript(this.GetType(), "script", newWin, true);
+        }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            String newWin = "window.open('updateInventory.aspx', 'popup_window', 'width=600,height=400,left=100,top=100,resizable=no');";
             ClientScript.RegisterStartupScript(this.GetType(), "script", newWin, true);
         }
     }

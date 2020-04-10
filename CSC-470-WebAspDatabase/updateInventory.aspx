@@ -6,9 +6,9 @@
 <head runat="server">
     <title></title>
 </head>
-<body>
-    <form id="form1" runat="server">
-        <div>
+<body style="height: 392px; width: 580px;">
+    <form id="form1" style="white-space: nowrap;overflow:auto" runat="server">
+        <div style="display:inline-block;overflow:auto; margin-top:0px;width:40%; height:500px">
             <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="item_id" DataSourceID="SqlDataSource1">
                 <Columns>
                     <asp:BoundField DataField="size" HeaderText="size" SortExpression="size" />
@@ -18,7 +18,39 @@
                 </Columns>
             </asp:GridView>
             <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:comboDBConnectionString %>" SelectCommand="SELECT * FROM [inventory]"></asp:SqlDataSource>
-&nbsp;&nbsp;&nbsp;
+        </div>
+
+        <div style="display:inline-block; overflow:auto;margin-top: 0px;width: 40%; height: 500px">
+            <asp:Label ID="Label1" runat="server" Text="size:" Width="2em"></asp:Label>
+            <asp:TextBox ID="txtSize" style="margin-left: 1em" runat="server" Width="131px"></asp:TextBox>
+            <br />
+            <br />
+            <asp:Label ID="Label2" runat="server" Text="item:" Width="2em"></asp:Label>
+            <asp:TextBox ID="txtItem" style="margin-left: 1em" runat="server" Width="131px"></asp:TextBox>
+            <br />
+            <br />
+            <asp:Label ID="Label3" runat="server" Text="qty:" Width="2em"></asp:Label>
+            <asp:TextBox ID="txtQuantity" style="margin-left: 1em" runat="server" Width="131px"></asp:TextBox>
+            <br />
+            <br />
+            &nbsp;<asp:Button ID="btnAdd" runat="server" style="margin-left:3em" Text="Add Item" Width="149px" />
+            <br />
+            <br />
+            <br />
+            <br />
+            <asp:Label ID="Label4" runat="server" Text="size:" Width="2em"></asp:Label>
+            <asp:TextBox ID="sizeTextBox" style="margin-left: 1em" runat="server" Width="131px"></asp:TextBox>
+            <br />
+            <br />
+            <asp:Label ID="Label5" runat="server" Text="item:" Width="2em"></asp:Label>
+            <asp:TextBox ID="itemTextBox" style="margin-left: 1em" runat="server" Width="131px"></asp:TextBox>
+            <br />
+            <br />
+            <asp:Label ID="Label6" runat="server" Text="qty:" Width="2em"></asp:Label>
+            <asp:TextBox ID="quantityTextBox" style="margin-left: 1em" runat="server" Width="131px"></asp:TextBox>
+            <br />
+            <br />
+            &nbsp;<asp:Button ID="btnUpdate" runat="server" style="margin-left:3em" Text="Update Inventory" Width="149px" />
         </div>
     </form>
 </body>

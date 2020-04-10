@@ -13,6 +13,7 @@
         }
         textarea{
             resize:none;
+            margin-left: 15px;
         }
         .column1{
             width:525px;
@@ -27,6 +28,12 @@
             margin-top:350px;
             margin-left:225px;
             display:inline-block;
+        }
+        .checkoutButton {
+            margin-bottom:25px;
+            margin-left: 440px;
+            width: 100px; 
+            height: 33px;
         }
     </style> 
 </head>
@@ -47,7 +54,13 @@
             <asp:ImageButton ID="btnCombo6" runat="server" BorderStyle="Solid" ImageUrl="~/Imgs/t-mcdonalds-Fries-Small-Medium.jpg" Width="126px" OnClick="btnCombo6_Click" />
             <asp:ImageButton ID="btnCombo5" runat="server" BorderStyle="Solid" ImageUrl="~/Imgs/t-mcdonalds-Coca-Cola-Classic-Small.jpg" Width="126px" OnClick="btnCombo5_Click" />
             <asp:ImageButton ID="btnCheckout" runat="server" style="margin-bottom:45px;margin-left:180px;" ImageUrl="~/Imgs/checkout-button.png" Width="100px" OnClick="btnCheckout_Click" />
-        </div>
+        <div class="checkoutButton">
+                
+            <asp:Button ID="Button1" runat="server" Text="Update Inventory" Width="120px" OnClick="Button1_Click" />
+                
+            </div>
+            </div>
+            
             <div class="column2">
                 &nbsp;&nbsp;
                 &nbsp;&nbsp; <asp:TextBox ID="tbxLineItems" runat="server" Height="363px" TextMode="MultiLine" Width="450px" ReadOnly="True" BorderStyle="Solid"></asp:TextBox>
