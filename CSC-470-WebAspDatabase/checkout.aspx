@@ -14,10 +14,12 @@
         .column1{
             width:250px;
             display:inline-block;
+            height: 367px;
         }
         .column2{
             width:173px;
             display:inline-block;
+            height: 367px;
         }
         .column3{
             width:45px;
@@ -47,12 +49,7 @@
             <br />
             <asp:Button ID="btnPeriod" runat="server" Height="75px" Text="." Width="75px" OnClick="btnPeriod_Click" />
             <asp:Button ID="btn0" runat="server" Height="75px" Text="0" Width="75px" OnClick="btn0_Click" />
-                        <div style="margin-left:158px;margin-top:-75px">
-            <asp:Button ID="btnClear" runat="server" Height="37px" style="margin-bottom:0px" Text="Clear" Width="75px" OnClick="btnClear_Click" />
-
-                            <br />
-            <asp:Button ID="btnAdd" runat="server" Height="37px" style="margin-top:1px" Text="Add" Width="75px" OnClick="btnAdd_Click" />
-            </div>
+            <asp:Button ID="btnAdd" runat="server" Height="75px" style="margin-top:1px" Text="Add" Width="75px" OnClick="btnAdd_Click" />
         </div>
 
             <div class="column2">
@@ -82,7 +79,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <asp:Button ID="btnCancel" runat="server" Height="37px" style="margin-top:10px" Text="Cancel" Width="128px" OnClick="btnCancel_Click" />
 
-            </div>
+           
             </div>
     </form>
 </body>

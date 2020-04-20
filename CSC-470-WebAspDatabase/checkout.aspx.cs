@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Data.SqlClient;
+using System.Configuration;
 using System.Web.UI.WebControls;
 
 namespace CSC_470_WebAspDatabase.Imgs
@@ -13,8 +14,7 @@ namespace CSC_470_WebAspDatabase.Imgs
         Default dflt = new Default();
         double orig_due;
         String query;
-        SqlConnection conn = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Administrator" +
-            "\\source\\repos\\CSC-470-WebAspDatabase\\CSC-470-WebAspDatabase\\comboDB.mdf;Integrated Security=True;Connect Timeout=30");
+        static SqlConnection conn = new SqlConnection("Data Source=470AQVOGL22019;Initial Catalog=test;Persist Security Info=True;User ID=sa;Password=p@ssw0rd");
         SqlCommand cmd = new SqlCommand();
         int id;
         HttpCookie subTotal;

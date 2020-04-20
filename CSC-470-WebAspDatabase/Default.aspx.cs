@@ -4,14 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Data.SqlClient;
+using System.Configuration;
 using System.Web.UI.WebControls;
 
 namespace CSC_470_WebAspDatabase
 {
     public partial class Default : System.Web.UI.Page
     {
-        static SqlConnection conn = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Administrator" +
-            "\\source\\repos\\CSC-470-WebAspDatabase\\CSC-470-WebAspDatabase\\comboDB.mdf;Integrated Security=True;Connect Timeout=30");
+       static SqlConnection conn = new SqlConnection("Data Source=470AQVOGL22019;Initial Catalog=test;Persist Security Info=True;User ID=sa;Password=p@ssw0rd");
+
         SqlCommand cmd = new SqlCommand();
 
         String query;
@@ -30,47 +31,64 @@ namespace CSC_470_WebAspDatabase
 
         protected void Page_Load(object sender, EventArgs e)
         {
-          
-            if (Request.Cookies["idNum"] != null && Request.Cookies["comboNum"] != null && Request.Cookies["cookieSize"] != null)
+            try
             {
-                size = Request.Cookies["cookieSize"].Value;
-                combo_num = Request.Cookies["comboNum"].Value;
-                id = Convert.ToInt16(Request.Cookies["idNum"].Value);
-                checkInventory(combo_num, size);
+             
+                if (Request.Cookies["idNum"] != null && Request.Cookies["comboNum"] != null && Request.Cookies["cookieSize"] != null)
+                {
+                    size = Request.Cookies["cookieSize"].Value;
+                    combo_num = Request.Cookies["comboNum"].Value;
+                    id = Convert.ToInt16(Request.Cookies["idNum"].Value);
+                    checkInventory(combo_num, size);
 
-                Response.Cookies["cookieSize"].Expires = DateTime.Now.AddDays(-1);
-                Response.Cookies["comboNum"].Expires = DateTime.Now.AddDays(-1);
-            } else
+                    Response.Cookies["cookieSize"].Expires = DateTime.Now.AddDays(-1);
+                    Response.Cookies["comboNum"].Expires = DateTime.Now.AddDays(-1);
+
+                }
+                else
+                {
+
+                    newSale();
+                }
+            }
+            catch (Exception ex)
             {
-                newSale();
+                ClientScript.RegisterStartupScript(this.GetType(), "exceptionAlert",
+                            "alert('" + ex + "');", true);
             }
         }
 
         public void newSale()
         {
-            if (Request.Cookies["idNum"] == null)
+            try
             {
-                query = "INSERT INTO sales (total) VALUES (0)";
-                cmd = new SqlCommand(query, conn);
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                conn.Close();
+                if (Request.Cookies["idNum"] == null)
+                {
+                    query = "INSERT INTO sales (total) VALUES (0)";
+                    cmd = new SqlCommand(query, conn);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
 
-                query = "SELECT MAX(Id) FROM SALES";
-                cmd = new SqlCommand(query, conn);
-                conn.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                reader.Read();
-                id = Convert.ToInt32(reader[0].ToString());
-                conn.Close();
+                    query = "SELECT MAX(Id) FROM SALES";
+                    cmd = new SqlCommand(query, conn);
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    reader.Read();
+                    id = Convert.ToInt32(reader[0].ToString());
+                    conn.Close();
 
-                idNum.Value = Convert.ToString(id);
-                idNum.Expires.Add(new TimeSpan(0, 1, 0));
-                Response.Cookies.Add(idNum);
-                System.Diagnostics.Debug.WriteLine("id: " + id);
+                    idNum.Value = Convert.ToString(id);
+                    idNum.Expires.Add(new TimeSpan(0, 1, 0));
+                    Response.Cookies.Add(idNum);
+                    System.Diagnostics.Debug.WriteLine("id: " + id);
 
 
-                tbxLineItems.Text = "";
+                    tbxLineItems.Text = "";
+                }
+            } catch(Exception et)
+            {
+                Response.Write(et);
             }
 
         }
@@ -91,7 +109,8 @@ namespace CSC_470_WebAspDatabase
             Response.Cookies.Add(comboNum);
 
             String newWin = "window.open('frmSize.aspx', 'popup_window', 'width=20,height=150,left=100,top=100,resizable=no');";
-            ClientScript.RegisterStartupScript(this.GetType(), "script", newWin, true); 
+            ClientScript.RegisterStartupScript(this.GetType(), "script", newWin, true);
+            Response.Write("<script> window.open('frmSize.aspx', 'popup_window', 'width=20,height=150,left=100,top=100,resizable=no'); </script>");
         }
 
         private void checkInventory(String combo, String size)
@@ -137,11 +156,11 @@ namespace CSC_470_WebAspDatabase
                 conn.Close();
                 if(cmb <= 3)
                 {
-                    query = "SELECT * FROM inventory WHERE (size = '" + size + "' AND item = 'French Fry' OR item = 'Drink' AND size = '" + size + "') AND item <> 'Fish'";
+                    query = "SELECT * FROM inventory WHERE (size = '" + size + "' AND item = 'French Fry' OR item = 'Drink' AND size = '" + size + "') OR item = 'Burger'";
                 }
                 else if (cmb == 4)
                 {
-                    query = "SELECT * FROM inventory WHERE (size = '" + size + "' AND item <> 'Burger')";
+                    query = "SELECT * FROM inventory WHERE (size = '" + size + "' OR item = 'Fish')";
                 }
                 else if (cmb == 5)
                 {
@@ -290,12 +309,17 @@ namespace CSC_470_WebAspDatabase
         {
             String newWin = "window.open('checkout.aspx', 'popup_window', 'width=450,height=400,left=100,top=100,resizable=no');";
             ClientScript.RegisterStartupScript(this.GetType(), "script", newWin, true);
+            Response.Write("<script>" + newWin + "</script>");
         }
 
         protected void Button1_Click(object sender, EventArgs e)
         {
-            String newWin = "window.open('updateInventory.aspx', 'popup_window', 'width=600,height=400,left=100,top=100,resizable=no');";
+            Response.Cookies["idNum"].Expires = DateTime.Now.AddDays(-1);
+            newSale();
+            tbxLineItems.Text = "";
+            String newWin = "window.open('updateInventory.aspx', 'popup_window', 'width=800,height=400,left=100,top=100,resizable=no');";
             ClientScript.RegisterStartupScript(this.GetType(), "script", newWin, true);
+            Response.Write("<script>" + newWin + "</script>");
         }
     }
 }
